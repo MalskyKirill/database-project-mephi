@@ -1,9 +1,5 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 public class TransportMeansApp {
@@ -14,8 +10,7 @@ public class TransportMeansApp {
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(TRANSPORT_URL, USER, PASSWORD)) {
 
-            runSqlScript(connection, "schema1.sql");
-
+            SqlScriptRunner.runSqlScript(TransportMeansApp.class, connection, "schema1.sql");
             String queryTaskFirst = """
                 Select v.maker, v.model
                 From Vehicle as v
@@ -83,47 +78,6 @@ public class TransportMeansApp {
                         , rs.getString("maker")
                         , rs.getString("model"));
                 }
-            }
-        }
-    }
-
-    private static void runSqlScript(Connection connection, String resource) throws IOException, SQLException {
-        InputStream inputStream = TransportMeansApp.class.getResourceAsStream(resource); // загружаем схему в виде потока
-
-        if (inputStream == null) {
-            throw new IOException("Файл не найден в resources: " + resource);
-        }
-
-        StringBuilder sql = new StringBuilder(); // создаем билдер
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty() || line.startsWith("--")) {
-                    continue;
-                }
-                sql.append(line).append("\n");
-            }
-
-            String[] statements = sql.toString().split(";");
-
-            connection.setAutoCommit(false);
-            try (Statement statement = connection.createStatement()) {
-                for (String stmt : statements) {
-                    String statementTrim = stmt.trim();
-                    if (!statementTrim.isEmpty()) {
-                        statement.execute(statementTrim);
-                    }
-                }
-                connection.commit();
-
-            } catch (SQLException e) {
-                connection.rollback();
-                throw e;
-            } finally {
-                connection.setAutoCommit(true);
             }
         }
     }

@@ -1,9 +1,5 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 public class CarRacingApp {
@@ -13,8 +9,7 @@ public class CarRacingApp {
 
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(CAR_RACING_URL, USER, PASSWORD)) {
-            runSqlScript(connection, "schema2.sql");
-
+            SqlScriptRunner.runSqlScript(CarRacingApp.class, connection, "schema2.sql");
             String queryTaskFirst = """
                 WITH car_stats AS (
                     SELECT
@@ -315,46 +310,6 @@ public class CarRacingApp {
                         rs.getLong("race_count"));
                 }
             }
-        }
-    }
-
-    private static void runSqlScript(Connection connection, String resource) throws IOException, SQLException {
-        InputStream inputStream = CarRacingApp.class.getResourceAsStream(resource);
-
-        if (inputStream == null) {
-            throw new IOException("Файл не найден в resources: " + resource);
-        }
-
-        StringBuilder sql = new StringBuilder();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) { // превращаем inpetStream в поток сиимволов и читаем построччно
-            String line;
-            while ((line = reader.readLine()) != null) { // пока есть что читать
-                line = line.trim(); // обрезаем проберлы
-                if (line.isEmpty() || line.startsWith("--")) { // если строка пустая или комментарий
-                    continue; // пропускаем
-                }
-
-                sql.append(line).append("\n");
-            }
-
-            String[] statements = sql.toString().split(";"); // преобразуем сб в массив
-
-            connection.setAutoCommit(false); // отключаем автокомит
-            try (Statement statement = connection.createStatement()) { // создаем стайтмент для выполнения запросов
-                for (String stmt : statements) { // бежим по массиву
-                    String statementTrim = stmt.trim();
-                    if (!statementTrim.isEmpty()) {
-                        statement.execute(statementTrim); // выполняем sql-ку
-                    }
-                }
-                connection.commit(); // комитимся
-            }
-        } catch (SQLException e) {
-            connection.rollback(); // откатываемся
-            throw e; // передаем ошибку
-        } finally {
-            connection.setAutoCommit(true); // возвращаем автокомит
         }
     }
 }
