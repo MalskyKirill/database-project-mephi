@@ -2,12 +2,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 
-public class TransportMeansApp {
+public final class TransportMeansApp {
     private static final String TRANSPORT_URL = "jdbc:mysql://localhost:3306/transport";
     private static final String USER = "root";
     private static final String PASSWORD = "secret";
 
-    public static void main(String[] args) {
+    public static void run() {
         try (Connection connection = DriverManager.getConnection(TRANSPORT_URL, USER, PASSWORD)) {
 
             SqlScriptRunner.runSqlScript(TransportMeansApp.class, connection, "schema1.sql");

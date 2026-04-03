@@ -2,12 +2,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 
-public class CarRacingApp {
+public final class CarRacingApp {
     private static final String CAR_RACING_URL = "jdbc:mysql://localhost:3306/racing";
     private static final String USER = "root";
     private static final String PASSWORD = "secret";
 
-    public static void main(String[] args) {
+    public static void run() {
         try (Connection connection = DriverManager.getConnection(CAR_RACING_URL, USER, PASSWORD)) {
             SqlScriptRunner.runSqlScript(CarRacingApp.class, connection, "schema2.sql");
             String queryTaskFirst = """
