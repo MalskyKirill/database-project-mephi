@@ -12,13 +12,14 @@ public class DBApp {
                     case "1" -> TransportMeansApp.run();
                     case "2" -> CarRacingApp.run();
                     case "3" -> HotelBooking.run();
+                    case "4" -> OrganizationStructure.run();
                     case "0" -> {
                         System.out.println("Выход");
                         return;
                     }
                     default -> {
                         System.out.println("Неизвестный выбор: " + input);
-                        System.out.println("Варианты: 1 (Транспортные средства), 2 (Автомобильные гонки), 3 (Бронирование отелей), 0 (exit)");
+                        System.out.println("Варианты: 1 (Транспортные средства), 2 (Автомобильные гонки), 3 (Бронирование отелей), 4 (Структура организации), 0 (exit)");
                     }
                 }
 
@@ -32,7 +33,8 @@ public class DBApp {
         System.out.println("1 - Транспортные средства");
         System.out.println("2 - Автомобильные гонки");
         System.out.println("3 - Бронирование отелей");
+        System.out.println("4 - Структура организации");
         System.out.println("0 - exit");
-        System.out.print("Введите 1, 2, 3 или 0: ");
+        System.out.print("Введите 1, 2, 3, 4 или 0: ");
     }
 }

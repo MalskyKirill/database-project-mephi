@@ -3,12 +3,12 @@ import java.math.BigDecimal;
 import java.sql.*;
 
 public final class TransportMeansApp {
-    private static final String TRANSPORT_URL = "jdbc:mysql://localhost:3306/transport";
-    private static final String USER = "root";
-    private static final String PASSWORD = "secret";
-
     public static void run() {
-        try (Connection connection = DriverManager.getConnection(TRANSPORT_URL, USER, PASSWORD)) {
+        String dbUrl = DatabaseConfig.getOrThrow("db.transport.url");
+        String dbUser = DatabaseConfig.getOrThrow("db.user");
+        String dbPassword = DatabaseConfig.getOrThrow("db.password");
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
 
             SqlScriptRunner.runSqlScript(TransportMeansApp.class, connection, "schema1.sql");
             String queryTaskFirst = """
